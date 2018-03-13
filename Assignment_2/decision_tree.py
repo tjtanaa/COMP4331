@@ -2,6 +2,7 @@ import scipy.io as sio
 import sklearn as sk
 from sklearn import tree
 from sklearn.externals import joblib
+from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_score
 from sklearn.metrics import classification_report
 import timeit
 import numpy as np
@@ -29,6 +30,52 @@ def getData(filepath):
 		filepath = parentPath + filepath
 		return np.reshape(sio.loadmat(filepath)['test_labels'], (n_test_samples,1))
 
+def reportScores(y_true, y_pred ,training_time,criterion, max_depth):
+	_accuracy = accuracy_score(y_true, y_pred)
+	_f1 = f1_score(y_true,y_pred, average ='micro')
+	_recall = recall_score(y_true,y_pred, average ='micro')
+	_precision = precision_score(y_true, y_pred, average ='micro')
+	# target_names = ['class 0', 'class 1', 'class 2', \
+	# 'class 3', 'class 4', 'class 5', \
+	# 'class 6', 'class 7', 'class 8', \
+	# 'class 9']
+	#classification_scores = classification_report(test_labels, test_predicted, target_names=target_names)
+
+	# print classification_scores
+	score_metric_file = outputPath + 'decision_tree_' + str(criterion) +'_' + str(max_depth) + 'classification_report.txt'
+	f = open(score_metric_file, 'w')
+	# f.write(str(target_names) + '\t')
+	# f.write('\n')
+	f.write('Precision \t')
+	f.write(str(_precision))
+	f.write('\n')
+	f.write('Accuracy \t')
+	f.write(str(_accuracy))
+	f.write('\n')
+	f.write('F1 score \t')
+	f.write(str(_f1))
+	f.write('\n')
+	f.write('Recall \t \t')
+	f.write(str(_recall))
+	f.write('\n')
+	f.write('Training Time \t')
+	f.write(str(training_time))
+	f.write('\n')
+	# f.write(classification_scores)
+	f.close()
+	print "classifier: " + str(criterion) + " maximum depth " +str(max_depth)
+	print "Precision"
+	print _precision
+	print "Accuracy"
+	print _accuracy
+	print "f1_score"
+	print _f1
+	print "Recall"
+	print _recall
+	print "Training Time"
+	print training_time
+	print
+
 def DTreeClassification(train_images, train_labels, test_images, test_labels,criterion = 'gini', max_depth = 5):
 	clf = tree.DecisionTreeClassifier(criterion=criterion, \
 		 splitter='best', \
@@ -51,22 +98,8 @@ def DTreeClassification(train_images, train_labels, test_images, test_labels,cri
 	end = timeit.default_timer()
 	print "training_ended"
 
-	timefile = outputPath + 'decision_tree_'+ str(criterion) +'_' + str(max_depth) + '_timetake.txt'
-	f = open(timefile, 'w')
-	f.write(str(end - start))
-	f.close()
 	test_predicted = clf.predict(test_images)
-	target_names = ['class 0', 'class 1', 'class 2', \
-	'class 3', 'class 4', 'class 5', \
-	'class 6', 'class 7', 'class 8', \
-	'class 9']
-	classification_scores = classification_report(test_labels, test_predicted, target_names=target_names)
-
-	print classification_scores
-	score_metric_file = outputPath + 'decision_tree_' + str(criterion) +'_' + str(max_depth) + 'classification_report.txt'
-	f = open(score_metric_file, 'w')
-	f.write(classification_scores)
-	f.close()
+	reportScores(test_labels, test_predicted, end - start, criterion, max_depth)
 
 if __name__ == "__main__":
 	train_images = getData("Dataset\\train_images.mat")
