@@ -1,0 +1,5 @@
+Precision 	0.825
+Accuracy 	0.825
+F1 score 	0.825
+Recall 	 	0.825
+Training Time 	1.58260487214
