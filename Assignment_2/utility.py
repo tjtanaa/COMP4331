@@ -8,9 +8,16 @@ DtreePath = parentPath + "Decision_Tree\\"
 KNNPath = parentPath + "KNN\\"
 SVMPath = parentPath + "SVM\\"
 RForestPath = parentPath + "Random_Forest\\"
+MLPPath = parentPath + "MLP\\"
+DSplitPath = parentPath + "DataSplit\\"
 
 n_train_samples = 10000
 n_test_samples = 1000
+
+"""
+	this is the function that is going to read the mat file and return a numpy array
+	this function will check for the keywords to determine which dataset to be imported
+"""
 
 # this is the function that is going to read the mat file and return a numpy array
 def getData(filepath):
@@ -33,7 +40,3 @@ def getData(filepath):
 def load_model(pickleFile):
 	# load the model from disk
 	return joblib.load(pickleFile)
-
-def load_SVM():
-	path = SVMPath + "svm_classifier.pkl"
-	return load_model(path)

@@ -12,6 +12,11 @@ n_test_samples = 1000
 parentPath =  "D:\SPRING 2018\COMP 4331 sit\Assignment\Assignment_2\\"
 outputPath =  parentPath + "Decision_Tree\\"
 
+"""
+	this is the function that is going to read the mat file and return a numpy array
+	this function will check for the keywords to determine which dataset to be imported
+"""
+
 # this is the function that is going to read the mat file and return a numpy array
 def getData(filepath):
 	if(filepath.find('train_images') != -1):
@@ -30,11 +35,27 @@ def getData(filepath):
 		filepath = parentPath + filepath
 		return np.reshape(sio.loadmat(filepath)['test_labels'], (n_test_samples,1))
 
-def reportScores(y_true, y_pred ,training_time,criterion, max_depth):
+"""
+	This function reports the scores: precision, accuracy, f1 score, recall, training time
+	Types of criterion:
+	'gini','entropy'
+
+	@param: 
+	y_true 	: ground truth
+	y_pred	: prediction
+	training_time	: time taken to train the model
+	criterion : the type of mathematical function to evaluate the information gain
+	max_depth : the depth of the tree
+	version	: 
+"""
+
+def reportScores(y_true, y_pred ,training_time,criterion, max_depth, version=''):
 	_accuracy = accuracy_score(y_true, y_pred)
-	_f1 = f1_score(y_true,y_pred, average ='micro')
-	_recall = recall_score(y_true,y_pred, average ='micro')
-	_precision = precision_score(y_true, y_pred, average ='micro')
+	_f1 = f1_score(y_true,y_pred, average ='micro') # calculate the f1 scores using the micro f1 score formula
+	_recall = recall_score(y_true,y_pred, average ='micro') # calculate the recall using the micro recall formula
+	_precision = precision_score(y_true, y_pred, average ='micro') # calculate the precision using the micro precision formula
+
+	## the following codes is used to evaluate the precision, recall, accuracy, support of each classes
 	# target_names = ['class 0', 'class 1', 'class 2', \
 	# 'class 3', 'class 4', 'class 5', \
 	# 'class 6', 'class 7', 'class 8', \
@@ -42,7 +63,7 @@ def reportScores(y_true, y_pred ,training_time,criterion, max_depth):
 	#classification_scores = classification_report(test_labels, test_predicted, target_names=target_names)
 
 	# print classification_scores
-	score_metric_file = outputPath + 'decision_tree_' + str(criterion) +'_' + str(max_depth) + 'classification_report.txt'
+	score_metric_file = outputPath + 'decision_tree_' + str(criterion) +'_' + str(max_depth) + 'classification_report' + str(version) +'.txt'
 	f = open(score_metric_file, 'w')
 	# f.write(str(target_names) + '\t')
 	# f.write('\n')
@@ -76,7 +97,21 @@ def reportScores(y_true, y_pred ,training_time,criterion, max_depth):
 	print training_time
 	print
 
-def DTreeClassification(train_images, train_labels, test_images, test_labels,criterion = 'gini', max_depth = 5):
+"""
+	Types of criterion:
+	'gini','entropy'
+
+	@params
+	train_images	: training set samples
+	train_labels	: training set labels / ground truth
+	test_images		: test set samples
+	test_labels		: test set labels
+	criterion		: type of mathematical formula to evaluate the information gain
+	max_depth		: depth of the tree
+	version			:
+"""
+
+def DTreeClassification(train_images, train_labels, test_images, test_labels,criterion = 'gini', max_depth = 5,version=''):
 	clf = tree.DecisionTreeClassifier(criterion=criterion, \
 		 splitter='best', \
 		 max_depth= max_depth) #, \
@@ -93,13 +128,16 @@ def DTreeClassification(train_images, train_labels, test_images, test_labels,cri
 	print "start_training"
 	start = timeit.default_timer()
 	clf = clf.fit(train_images, train_labels)
+	"""
+		save model as picklefile
+	"""
 	picklefile = outputPath + 'decision_tree_' + str(criterion) +'_' + str(max_depth) + '.pkl'
 	joblib.dump(clf, picklefile)
 	end = timeit.default_timer()
 	print "training_ended"
 
 	test_predicted = clf.predict(test_images)
-	reportScores(test_labels, test_predicted, end - start, criterion, max_depth)
+	reportScores(test_labels, test_predicted, end - start, criterion, max_depth, version)
 
 if __name__ == "__main__":
 	train_images = getData("Dataset\\train_images.mat")
