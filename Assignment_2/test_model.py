@@ -10,6 +10,6 @@ if __name__ == "__main__":
 	y_pred = model.predict(test_images)
 
 	print "Precision"
-	print precision_score(test_labels, y_pred,average ='micro')
+	print precision_score(test_labels, y_pred,average ='weighted')
 	print "Recall"
-	print recall_score(test_labels, y_pred, average ='micro')
+	print recall_score(test_labels, y_pred, average ='weighted')

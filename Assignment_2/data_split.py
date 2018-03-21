@@ -5,9 +5,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 if __name__ == "__main__":
-	x1 = getData("Dataset\\train_images.mat")
+	x1 = getData("Dataset/train_images.mat")
 	x2 = getData("Dataset/test_images.mat")
-	y1 = getData("Dataset\\train_labels.mat")
+	y1 = getData("Dataset/train_labels.mat")
 	y2 = getData("Dataset/test_labels.mat")
 	FullImages = np.concatenate((x1,x2))
 	FullLabels = np.concatenate((y1,y2))

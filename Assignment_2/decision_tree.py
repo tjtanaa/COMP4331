@@ -6,11 +6,12 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_sc
 from sklearn.metrics import classification_report
 import timeit
 import numpy as np
-
+import os
+from os.path import join
 n_train_samples = 10000
 n_test_samples = 1000
-parentPath =  "D:\SPRING 2018\COMP 4331 sit\Assignment\Assignment_2\\"
-outputPath =  parentPath + "Decision_Tree\\"
+parentPath =  os.getcwd() + os.path.sep
+outputPath =  join(parentPath,"Decision_Tree/")
 
 """
 	this is the function that is going to read the mat file and return a numpy array
@@ -51,9 +52,9 @@ def getData(filepath):
 
 def reportScores(y_true, y_pred ,training_time,criterion, max_depth, version=''):
 	_accuracy = accuracy_score(y_true, y_pred)
-	_f1 = f1_score(y_true,y_pred, average ='micro') # calculate the f1 scores using the micro f1 score formula
-	_recall = recall_score(y_true,y_pred, average ='micro') # calculate the recall using the micro recall formula
-	_precision = precision_score(y_true, y_pred, average ='micro') # calculate the precision using the micro precision formula
+	_f1 = f1_score(y_true,y_pred, average ='weighted') # calculate the f1 scores using the'weighted f1 score formula
+	_recall = recall_score(y_true,y_pred, average ='weighted') # calculate the recall using the'weighted recall formula
+	_precision = precision_score(y_true, y_pred, average ='weighted') # calculate the precision using the'weighted precision formula
 
 	## the following codes is used to evaluate the precision, recall, accuracy, support of each classes
 	# target_names = ['class 0', 'class 1', 'class 2', \
@@ -140,8 +141,8 @@ def DTreeClassification(train_images, train_labels, test_images, test_labels,cri
 	reportScores(test_labels, test_predicted, end - start, criterion, max_depth, version)
 
 if __name__ == "__main__":
-	train_images = getData("Dataset\\train_images.mat")
-	train_labels = getData("Dataset\\train_labels.mat")
+	train_images = getData("Dataset/train_images.mat")
+	train_labels = getData("Dataset/train_labels.mat")
 	test_images = getData("Dataset/test_images.mat")
 	test_labels = getData("Dataset/test_labels.mat")
 	DTreeClassification(train_images, train_labels, test_images, test_labels, 'gini',5)

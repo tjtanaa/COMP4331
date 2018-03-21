@@ -6,11 +6,13 @@ from sklearn.metrics import accuracy_score, f1_score, recall_score, precision_sc
 from sklearn.metrics import classification_report
 import timeit
 import numpy as np
+import os
+from os.path import join
 
 n_train_samples = 10000
 n_test_samples = 1000
-parentPath =  "D:\SPRING 2018\COMP 4331 sit\Assignment\Assignment_2\\"
-outputPath =  parentPath + "MLP\\"
+parentPath =  os.getcwd() + os.path.sep
+outputPath =  parentPath + "MLP/"
 
 """
 	this is the function that is going to read the mat file and return a numpy array
@@ -52,9 +54,9 @@ def getData(filepath):
 
 def reportScores(y_true, y_pred ,training_time, hidden_layer_sizes, activation,version):
 	_accuracy = accuracy_score(y_true, y_pred)
-	_f1 = f1_score(y_true,y_pred, average ='micro') # calculate the f1 scores using the micro f1 score formula
-	_recall = recall_score(y_true,y_pred, average ='micro') # calculate the recall using the micro recall formula
-	_precision = precision_score(y_true, y_pred, average ='micro') # calculate the precision using the micro precision formula
+	_f1 = f1_score(y_true,y_pred, average ='weighted') # calculate the f1 scores using the weighted f1 score formula
+	_recall = recall_score(y_true,y_pred, average ='weighted') # calculate the recall using the weighted recall formula
+	_precision = precision_score(y_true, y_pred, average ='weighted') # calculate the precision using the weighted precision formula
 
 	## the following codes is used to evaluate the precision, recall, accuracy, support of each classes
 	# target_names = ['class 0', 'class 1', 'class 2', \
@@ -103,9 +105,9 @@ def reportScores(y_true, y_pred ,training_time, hidden_layer_sizes, activation,v
 	'relu', 'tanh', 'sigmoid'
 
 	Types of solver:
-	‘lbfgs’ is an optimizer in the family of quasi-Newton methods.
-	‘sgd’ refers to stochastic gradient descent.
-	‘adam’ refers to a stochastic gradient-based optimizer proposed by Kingma, Diederik, and Jimmy Ba
+	'lbfgs' is an optimizer in the family of quasi-Newton methods.
+	'sgd' refers to stochastic gradient descent.
+	'adam' refers to a stochastic gradient-based optimizer proposed by Kingma, Diederik, and Jimmy Ba
 
 	@params
 	train_images	: training set samples
@@ -119,7 +121,7 @@ def reportScores(y_true, y_pred ,training_time, hidden_layer_sizes, activation,v
 	version	: 	:
 """
 
-def MLPClassification(train_images, train_labels, test_images, test_labels, hidden_layer_sizes = (100,), activation = 'relu', solver = 'adam', alpha = 0.0001,,version=''):
+def MLPClassification(train_images, train_labels, test_images, test_labels, hidden_layer_sizes = (100,) , activation = 'relu', solver = 'adam', alpha = 0.0001,version=''):
 	clf = neural_network.MLPClassifier (hidden_layer_sizes=hidden_layer_sizes, activation=activation, solver=solver, alpha=alpha, batch_size='auto', learning_rate='constant', \
 		learning_rate_init=0.001, power_t=0.5, max_iter=200, shuffle=True, random_state=None, tol=0.0001, verbose=False, warm_start=False, \
 		momentum=0.9, nesterovs_momentum=True, early_stopping=False, validation_fraction=0.1, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
@@ -135,8 +137,8 @@ def MLPClassification(train_images, train_labels, test_images, test_labels, hidd
 	reportScores(test_labels, test_predicted, end - start, hidden_layer_sizes, activation, version)
 
 if __name__ == "__main__":
-	train_images = getData("Dataset\\train_images.mat")
-	train_labels = getData("Dataset\\train_labels.mat")
+	train_images = getData("Dataset/train_images.mat")
+	train_labels = getData("Dataset/train_labels.mat")
 	test_images = getData("Dataset/test_images.mat")
 	test_labels = getData("Dataset/test_labels.mat")
 	MLPClassification(train_images, train_labels, test_images, test_labels,(50,))

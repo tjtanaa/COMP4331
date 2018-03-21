@@ -1,15 +1,16 @@
 from sklearn.externals import joblib
 import scipy.io as sio
 import numpy as np
+import os
 
 # Assignment Specific User Defined Functions and Variables
-parentPath = "D:\SPRING 2018\COMP 4331 sit\Assignment\Assignment_2\\"
-DtreePath = parentPath + "Decision_Tree\\"
-KNNPath = parentPath + "KNN\\"
-SVMPath = parentPath + "SVM\\"
-RForestPath = parentPath + "Random_Forest\\"
-MLPPath = parentPath + "MLP\\"
-DSplitPath = parentPath + "DataSplit\\"
+parentPath = os.getcwd() + os.path.sep
+DtreePath = parentPath + "Decision_Tree/"
+KNNPath = parentPath + "KNN/"
+SVMPath = parentPath + "SVM/"
+RForestPath = parentPath + "Random_Forest/"
+MLPPath = parentPath + "MLP/"
+DSplitPath = parentPath + "DataSplit/"
 
 n_train_samples = 10000
 n_test_samples = 1000
