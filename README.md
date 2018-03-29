@@ -58,6 +58,14 @@ __Textbooks__
 __Notes about exam content__
 1.    Grid-Based Clustering would not be covered.
 2.    Univariate Gaussian Mixture Model would be tested in the assignment but not in the exam as it is hard to calculate the probability
------
-|lol|
------
+
+__Assignments Notes__
+
+Assignment 3 will be released tmr Friday 30 March 2018
+
+|Assignments| Status| Deadline |
+| --- | --- | --- |
+| Assignment 1 | Done | March 5th, 2018 |
+| Assignment 2 | Done | March 22nd, 2018 |
+| Assignment 3 | Yet to be released | April 9th, 2018 |
+| Assignment 4 | Yet to be released | April 23th, 2018 |
