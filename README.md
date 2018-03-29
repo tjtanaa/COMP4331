@@ -54,3 +54,6 @@ __Textbooks__
 2.   Introduction to Data Mining by Pang-Ning Tan, Michael Steinbach, and Vipin Kumar, Pearson International Edition, 2005.
 
 3.    Data Mining.  by Ian Witten and Ebe Frank. (Google books)
+
+__Notes about exam content__
+1.    Grid-Based Clustering would not be covered.
