@@ -57,3 +57,7 @@ __Textbooks__
 
 __Notes about exam content__
 1.    Grid-Based Clustering would not be covered.
+2.    Univariate Gaussian Mixture Model would be tested in the assignment but not in the exam as it is hard to calculate the probability
+-----
+|lol|
+-----
