@@ -39,7 +39,7 @@ and the std of points assigned to each cluster for updating.*
 One exemplar way to draw the clustering results on the DBSCAN dataset is
 shown as below.
 
-![Image of clusters](https://github.com/tjtanaa/COMP4331/edit/master/Assignment_3/images/Example.png)
+![Image of clusters](https://github.com/tjtanaa/COMP4331/edit/master/Assignment_3/images/Example.PNG)
 
 *Figure 1: One exemplar way to draw the clustering results where points are
 assigned with colors according to the corresponding clusters.*
