@@ -167,6 +167,7 @@ def EM_GMM(dataset, n_clusters, n_features, eps, epoch = 100):
 		# # Plot the update dataset and labels
 		plotDataSet(dataset, mu_c, var_c, n_clusters, epoc, 'Estimated number of clusters: 2')
 
+		# check whether the MLE reached a saturation point
 		if(np.fabs(_log_p_x - log_p_x) < eps):
 			log_p_x = _log_p_x
 			break
@@ -218,6 +219,8 @@ if __name__ == "__main__":
 
 	# save figure
 	saveFigureAsPNG("userEM-GMM_before", userFig0)
+
+	# After Training the Model and relabel the dataset
 
 	GMM_Parameters = EM_GMM(GMMDataset, 2, 2, 0.001, 100)
 	
