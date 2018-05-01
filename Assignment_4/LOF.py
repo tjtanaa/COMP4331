@@ -29,6 +29,7 @@ def getDataset(filepath):
 		data_col = csv.reader(x.replace('\0', '') for x in csvfile)
 		# data_col = csv.reader(csvfile)
 		if(filepath.find('click-stream') != -1):
+			# return list(data_col)
 			for data in data_col:
 				yield data	# [user_id, load_video, pause_video, play_video, seek_video, speed_change_video, stop_video]
 
@@ -48,6 +49,7 @@ def Manhattan_Distance(p, o):
 	_p = np.transpose(p)
 	_o = np.transpose(o)
 	_dist = np.absolute(_p - _o)
+	# return np.sum(np.absolute(p - o))
 	return np.sum(_dist)
 
 def reachability_p_o(ith_temp_dist, _kDist, oIndexes):
@@ -122,21 +124,31 @@ def _LOF(dataset, k, distance_function = Euclidean_Distance):
 
 	return _LOFvalues
 
-def LOF(dataset, k, distance_function = Euclidean_Distance , eps = 0.5):
-	_LOF_list = _LOF(dataset, 2, distance_function)
-	_outlier = [index for index, x in enumerate(_LOF_list) if np.fabs(x - 1.0) > eps]
-	print _outlier
+def LOF(dataset, k, distance_function = Euclidean_Distance):
+	_LOF_list = _LOF(dataset, k, distance_function)
+	_outlier = sorted(range(len(_LOF_list)), key=lambda j: _LOF_list[j])[-5:]
+	# print _outlier
+	for index in _outlier:
+		print _LOF_list[index]
 	return {"LOF": _LOF_list, "Outlier": _outlier}
 
 if __name__ == '__main__':
 	_dataset = getDataset("click-stream event.csv")
 	print _dataset.next()
+	# print _dataset
 	dataset = list(_dataset)
-	# print sorted(_LOF(dataset, 2, Manhattan_Distance))
-	# print sorted(_LOF(dataset, 3, Euclidean_Distance))
 	Manhattan_LOF = LOF(dataset, 2, Manhattan_Distance)
-	Euclidean_LOF = LOF(dataset, 3, Euclidean_Distance)
-	Euclidean_LOF_2 = LOF(dataset, 15, Euclidean_Distance)
+	print "Top 5 Outliers of LOF with distance function (Manhattan_Distance, k = 2) are "
+	print Manhattan_LOF["Outlier"]
+	Manhattan_LOF = LOF(dataset, 3, Manhattan_Distance)
+	print "Top 5 Outliers of LOF with distance function (Manhattan_Distance, k = 3) are "
+	print Manhattan_LOF["Outlier"]
+	Euclidean_LOF = LOF(dataset, 2, Euclidean_Distance)
+	print "Top 5 Outliers of LOF with distance function (Euclidean_Distance, k = 2) are "
+	print Euclidean_LOF["Outlier"]
+	Euclidean_LOF_2 = LOF(dataset, 3, Euclidean_Distance)
+	print "Top 5 Outliers of LOF with distance function (Euclidean_Distance, k = 3) are "
+	print Euclidean_LOF_2["Outlier"]
 
 	plt.figure(1)
 	index = range(len(dataset))
