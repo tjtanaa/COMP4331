@@ -65,7 +65,7 @@ def sumCells(gridCount, index_1, index_2, layer = 0, Ndim = 2):
 		_lower_bound = 3
 		_upper_bound = 4
 
-	for i in range(index_1 - _lower_bound, index_1+ _upper_bound):
+	for i in range(index_1 - _lower_bound , index_1+ _upper_bound):
 		for j in range(index_2 - _lower_bound, index_2 + _upper_bound):
 			_sum = gridCount[i][j]
 	return _sum
@@ -76,7 +76,7 @@ def labelCellsL1(gridStatus, index_1, index_2, Ndim = 2):
 			if( (i == index_1) & (j == index_2)):
 				gridStatus[i][j] = 3 # label red
 			else:
-				if(gridStatus[i][j] ==0):
+				if(gridStatus[i][j] == 0):
 					gridStatus[i][j] = 2 # label pink
 
 def getL2Cells(gridPoints, index_1, index_2 , Dim1, Dim2):
@@ -92,8 +92,8 @@ def getL2Cells(gridPoints, index_1, index_2 , Dim1, Dim2):
 	for x in range(_lowerIndex1,_upperIndex1):
 			for y in range(_lowerIndex2, _upperIndex2):
 				if( (x >= 0) & ( x < Dim1 ) & (y >= 0) & ( y < Dim2 ) 
-					& (x < inner_lowerIndex1) & (x > inner_upperIndex1) 
-					& (y < inner_lowerIndex2) & (y > inner_upperIndex2)):
+					& ((x < inner_lowerIndex1) | (x > inner_upperIndex1)) 
+					& ((y < inner_lowerIndex2) | (y > inner_upperIndex2))):
 						for point in gridPoints["(" + str(x) + "," + str(y) + ")"]:
 							_ret.append(point)
 	return _ret
@@ -172,6 +172,9 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 				pointStatus[point] = _status
 				if(_status == 1):
 					_outlier.append(point)
+
+	# for x in xrange(3, Dim1 + 3):
+	# 	print gridCount[x]
 
 	return (pointStatus, _outlier)
 
