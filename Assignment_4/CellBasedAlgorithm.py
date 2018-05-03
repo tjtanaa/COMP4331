@@ -65,9 +65,17 @@ def sumCells(gridCount, index_1, index_2, layer = 0, Ndim = 2):
 		_lower_bound = 3
 		_upper_bound = 4
 
+	# _sampled = []
+	# print "centre: " + str(index_1) + "," + str(index_2)
 	for i in range(index_1 - _lower_bound , index_1+ _upper_bound):
 		for j in range(index_2 - _lower_bound, index_2 + _upper_bound):
-			_sum = gridCount[i][j]
+			# _sampled.append([i,j])
+			_sum += gridCount[i][j]
+			# print str(i) + "," + str(j)
+	# if(layer == 2):
+	# 	plt.figure(10)
+	# 	plt.plot(np.array(_sampled)[:,0], np.array(_sampled)[:,1], "ro")
+	# 	plt.show()	
 	return _sum
 
 def labelCellsL1(gridStatus, index_1, index_2, Ndim = 2):
@@ -77,7 +85,10 @@ def labelCellsL1(gridStatus, index_1, index_2, Ndim = 2):
 				gridStatus[i][j] = 3 # label red
 			else:
 				if(gridStatus[i][j] == 0):
+					# print "original gridStatus " + str(i) +"," + str(j)
+					# print gridStatus[i][j]
 					gridStatus[i][j] = 2 # label pink
+					# print "pink"
 
 def getL2Cells(gridPoints, index_1, index_2 , Dim1, Dim2):
 	_lowerIndex1 = index_1 - 3
@@ -89,16 +100,24 @@ def getL2Cells(gridPoints, index_1, index_2 , Dim1, Dim2):
 	inner_lowerIndex2 = index_2 - 1
 	inner_upperIndex2 = index_2 + 1
 	_ret = []
+	# print "centre: " + str(index_1) + "," + str(index_2)
+	# _sampled = []
 	for x in range(_lowerIndex1,_upperIndex1):
 			for y in range(_lowerIndex2, _upperIndex2):
-				if( (x >= 0) & ( x < Dim1 ) & (y >= 0) & ( y < Dim2 ) 
-					& ((x < inner_lowerIndex1) | (x > inner_upperIndex1)) 
-					& ((y < inner_lowerIndex2) | (y > inner_upperIndex2))):
+				if( (x >= 0) & ( x < Dim1 + 6 ) & (y >= 0) & ( y < Dim2 + 6 ) 
+					& (((x < inner_lowerIndex1) | (x > inner_upperIndex1)) 
+					| ((y < inner_lowerIndex2) | (y > inner_upperIndex2)))):
+						# print str(x) + "," + str(y)
+						# _sampled.append([x,y])	
 						for point in gridPoints["(" + str(x) + "," + str(y) + ")"]:
 							_ret.append(point)
+							
+	# plt.figure(10)
+	# plt.plot(np.array(_sampled)[:,0], np.array(_sampled)[:,1], "ro")
+	# plt.show()
 	return _ret
 
-def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
+def FindAllOutsM(dataset, M, D, Ndim = 2):
 	# 3 is red
 	# 2 is pink
 	# 1 is outlier
@@ -115,12 +134,14 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 	print "Dimension 2: " + str(Dim2)
 	# TODO: for multidimentional data
 	##
+
 	## add padding to the grid to simplify the computation by avoiding edge/boundary cases
-	gridCount = np.zeros((Dim1 + 6, Dim2 + 6))
-	gridStatus = np.zeros((Dim1 + 6, Dim2 + 6))
+	gridCount = np.zeros((Dim1 + 6, Dim2 + 6), dtype = int)
+	gridStatus = np.zeros((Dim1 + 6, Dim2 + 6), dtype = int)
 	gridPoints = defaultdict(lambda:[])
 	pointStatus = np.zeros((len(dataset), 1), dtype = int)
 	_outlier = []
+	_outlier_list = []
 	for data in dataset:
 		xCoor = np.int(np.float(data[1] - Min1)/ l) + 3 # 3 is the offset gain from padding
 		yCoor = np.int(np.float(data[2] - Min2)/ l) + 3 # 3 is the offset gain from padding
@@ -134,7 +155,7 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 		for y in xrange(3, Dim2 + 3): # remember the offset
 			# print len(grid[0,:])
 			countW1 = sumCells(gridCount,x,y,0)
-			if(countW1 > M):
+			if(countW1 > float(M)):
 				labelCellsL1(gridStatus, x,y)
 
 	# second scan to fill cells depending on L1 cells
@@ -142,7 +163,7 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 		# print len(grid[:,0])
 		for y in xrange(3, Dim2 + 3): # remember the offset
 			# print len(grid[0,:])
-			if(gridStatus[x][y] == 0):
+			if((gridStatus[x][y] == 0) & (gridCount[x][y] > 0)):
 				countW2 = sumCells(gridCount,x,y,1)
 				if(countW2 > M):
 					gridStatus[x][y] = 2 # label as pink
@@ -153,7 +174,9 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 					else:
 						for p in gridPoints["(" + str(x) + "," + str(y) + ")"]:
 							countP = countW2
-							for q in getL2Cells(gridPoints, index_1, index_2, Dim1, Dim2):
+							# print "L2Cells of " + str(p)
+							# print getL2Cells(gridPoints, x, y, Dim1, Dim2)
+							for q in getL2Cells(gridPoints, x, y, Dim1, Dim2):
 								if(Euclidean_Distance(dataset[p,1:],dataset[q,1:]) <= D):
 									countP += 1
 									if(countP > M):
@@ -175,7 +198,26 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 
 	# for x in xrange(3, Dim1 + 3):
 	# 	print gridCount[x]
-	print np.sum(gridCount)
+	# print np.sum(gridCount)
+
+	for outlier in _outlier:
+		_outlier_list.append([outlier, dataset[outlier][1], dataset[outlier][2]])
+
+	## plot the grid and dataset for better understanding
+	x_major_ticks = np.arange(Min1, Min1 + l*Dim1, l)
+	y_major_ticks = np.arange(Min2, Min2 + l*Dim2, l)
+
+	fig = plt.figure()
+	ax = fig.add_subplot(1,1,1)
+
+	ax.set_xticks(x_major_ticks)
+	ax.set_yticks(y_major_ticks)
+	plt.plot(dataset[:,1], dataset[:,2], 'ro', markersize = 2)
+	plt.plot(np.array(_outlier_list)[:,1], np.array(_outlier_list)[:,2], 'go', markersize = 4)
+	plt.plot()
+
+	ax.grid(which="both")
+	plt.show()
 
 	return (pointStatus, _outlier)
 
@@ -199,7 +241,7 @@ if __name__ == '__main__':
 	# plt.xlabel("pause_video")
 	# plt.ylabel("play_video")
 	# plt.show()
-	pointStatus, outlierList = FindAllOutsM(dataset, 20, 10, 1)
+	pointStatus, outlierList = FindAllOutsM(dataset, 2, 7)
 	# print "pointStatus"
 	# print pointStatus
 	print "number of 0 (special)"
