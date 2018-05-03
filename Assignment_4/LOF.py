@@ -52,10 +52,10 @@ def Manhattan_Distance(p, o):
 	# return np.sum(np.absolute(p - o))
 	return np.sum(_dist)
 
-def reachability_p_o(ith_temp_dist, _kDist, oIndexes):
+def reachability_p_o(ith_temp_dist_p, ith_temp_k_dist_o, oIndexes):
 	_list = np.zeros((len(oIndexes),1))
 	for i in xrange(len(oIndexes)):
-		_list[i] = np.maximum(_kDist, ith_temp_dist[oIndexes[i]])
+		_list[i] = np.maximum(ith_temp_k_dist_o[oIndexes[i]], ith_temp_dist_p[oIndexes[i]])
 	return _list
 
 def lrd_p(_kNNList, reachabilityList):
@@ -88,35 +88,57 @@ def _LOF(dataset, k, distance_function = Euclidean_Distance):
 
 	# to store a list of the k-nearest neighbors of p
 	_kNN_p = []
+
+	# an array which stores the k_distance to reduce computations
+	_temp_k_dist = np.zeros((number_of_data,number_of_data))
+
+	# k-nearest neighbors list
+	_kNNList = defaultdict(lambda:[])
+
+
 	# find k-nearest neighbors of p and its k-distance
 	for p in xrange(number_of_data):
-		# k-nearest neighbors list
-		_kNNList = []
 		# k-distance
-		_kDist = 0
+		_kDist = 0.0
+
 		# obtain the index of the sorted array
 		_index = np.argsort(_temp_dist[p])
-		# Start searching or the k-nearest neighbors
-		for j in xrange(k):
-			_kNNList.append(_index[j])
+		# print _temp_dist[p]
+		# print _index
+
 		# assign k-distance
 		_kDist = _temp_dist[p][_index[k - 1]]
 
+		# Start searching or the k-nearest neighbors
+		for j in xrange(k):
+			_kNNList[p].append(_index[j])
+			_temp_k_dist[j][p] = _kDist
+			# print j
+
+		# print _kDist
+		# print _kNNList
+
 		# Check for any other points which are a the same distance as neighbor K
 		for j in xrange(k, number_of_data):
-			if(np.isclose(_temp_dist[p][j], _kDist)):
-				_kNNList.append(_index[j])
+			# if(np.isclose(_temp_dist[p][j], _kDist)):
+			if((_temp_dist[p][_index[j]] - _kDist) < 1e-6):
+				_kNNList[p].append(_index[j])
 			else:
 				break
+		# print _kNNList
+
+	# find k-nearest neighbors of p and its k-distance
+	for p in xrange(number_of_data):
 
 		# compute reachability
-		reachabilityList = reachability_p_o(_temp_dist[p], _kDist, _kNNList)
+		reachabilityList = reachability_p_o(_temp_dist[p], _temp_k_dist[p], _kNNList[p])
+		# print reachabilityList
 
 		# compute the local reachability density
-		_lrdvalues[p] = lrd_p(_kNNList, reachabilityList)
+		_lrdvalues[p] = lrd_p(_kNNList[p], reachabilityList)
 
 		# append to the _kNN_p
-		_kNN_p.append(_kNNList)
+		_kNN_p.append(_kNNList[p])
 
 	# compute the LOF values
 	for p in xrange(number_of_data):
@@ -172,6 +194,10 @@ if __name__ == '__main__':
 	plt.title("Euclidean_LOF_2")
 	plt.show()
 
+	dataset2 = np.array([[0,0,0], [1,0,1], [2,1,1], [3,3,0]])
+	Manhattan_LOF = LOF(dataset2, 2, Manhattan_Distance)
+	print "Top 5 Outliers of LOF of dataset2 with distance function (Manhattan_Distance, k = 2) are "
+	print Manhattan_LOF["Outlier"]
 
 
 

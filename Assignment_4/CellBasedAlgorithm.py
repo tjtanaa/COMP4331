@@ -175,6 +175,7 @@ def FindAllOutsM(dataset, M, D, dataChoice = 1, Ndim = 2):
 
 	# for x in xrange(3, Dim1 + 3):
 	# 	print gridCount[x]
+	print np.sum(gridCount)
 
 	return (pointStatus, _outlier)
 
