@@ -68,4 +68,4 @@ Assignment 3 will be released tmr Friday 30 March 2018
 | Assignment 1 | Done | March 5th, 2018 |
 | Assignment 2 | Done | March 22nd, 2018 |
 | Assignment 3 | Done | April 13th, 2018 |
-| Assignment 4 | Yet to be released | April 23th, 2018 |
+| Assignment 4 | Done | April 23th, 2018 |
